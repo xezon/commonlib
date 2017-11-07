@@ -32,4 +32,14 @@ inline void Sleep(T time)
 	::std::this_thread::sleep_for(time);
 }
 
+inline bool IsValidString(const char* str)
+{
+	return str && *str;
+}
+
+inline bool IsValidString(const wchar_t* str)
+{
+	return str && *str;
+}
+
 } // namespace utils
