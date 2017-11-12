@@ -7,6 +7,10 @@
 #include <cassert>
 #include <cstdint>
 
+#define UTILS_DELETE_COPY_CONSTRUCTOR(clazz) \
+	clazz(const clazz&) = delete; \
+	clazz& operator=(const clazz&) = delete;
+
 using namespace std::chrono_literals;
 
 namespace utils
