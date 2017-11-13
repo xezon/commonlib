@@ -6,8 +6,7 @@
 #include <memory>
 #include <algorithm>
 
-namespace stl
-{
+namespace stl {
 
 template<typename... Args>
 inline ::std::string string_format(const char* format, Args... args)

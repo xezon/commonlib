@@ -4,8 +4,8 @@
 #include <codecvt>
 #include <string>
 
-namespace utf8
-{
+namespace utf8 {
+
 inline ::std::u16string to_utf16(const ::std::string& str)
 {
 	::std::wstring_convert<::std::codecvt_utf8_utf16<char16_t>, char16_t> c;

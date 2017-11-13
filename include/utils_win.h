@@ -3,8 +3,7 @@
 
 #include <Windows.h>
 
-namespace utils
-{
+namespace utils {
 
 template<typename F>
 inline F GetProcAddressT(HMODULE hModule, LPCSTR lpProcName)
