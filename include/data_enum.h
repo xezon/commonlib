@@ -88,6 +88,12 @@ public:
 	constexpr bool operator>=(const CDataEnum& other) const noexcept {
 		return m_value >= other.m_value;
 	}
+	constexpr bool is_valid() const noexcept {
+		for (ordinal_type i = 0, c = count(); i < c; ++i)
+			if (m_value == m_values[i])
+				return true;
+		return false;
+	}
 };
 
 #define DATA_ENUM_UNROLL_MEMBERS(enumName, enumValue, ...) constexpr static enum_type enumName{enum_type::enumName};
