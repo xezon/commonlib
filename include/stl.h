@@ -51,14 +51,14 @@ inline bool find_and_erase_if(Container& container, const Predicate& predicate)
 	return false;
 }
 
-template<class Iterator, class Value, class Compare = std::less<>>
+template<class Iterator, class Value, class Compare = ::std::less<>>
 inline Iterator binary_find(Iterator first, Iterator last, const Value& value, Compare comp = {})
 {
 	first = ::std::lower_bound(first, last, value, comp);
 	return (first != last) && !comp(value, *first) ? first : last;
 }
 
-template<class Iterator, class Value, class Compare = std::less<>>
+template<class Iterator, class Value, class Compare = ::std::less<>>
 inline typename Iterator::difference_type binary_find_index(Iterator first, Iterator last, const Value& value, Compare comp = {})
 {
 	Iterator it = binary_find(first, last, value, comp);

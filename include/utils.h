@@ -11,7 +11,7 @@
 	clazz(const clazz&) = delete; \
 	clazz& operator=(const clazz&) = delete;
 
-using namespace std::chrono_literals;
+using namespace ::std::chrono_literals;
 
 namespace utils
 {

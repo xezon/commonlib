@@ -5,7 +5,7 @@
 #include <stdexcept>
 #define DATA_ENUM_ERROR(condition) \
 	if (condition) { \
-		throw std::exception("enum ordinal out of range"); \
+		throw ::std::exception("enum ordinal out of range"); \
 	}
 #elif DATA_ENUM_DEBUGGING == 2
 #include <cassert>
