@@ -122,8 +122,12 @@
     <ClInclude Include="..\include\time_counter.h" />
     <ClInclude Include="..\include\utf8.h" />
     <ClInclude Include="..\include\utils.h" />
+    <ClInclude Include="..\include\utils_c.h" />
     <ClInclude Include="..\include\utils_log.h" />
     <ClInclude Include="..\include\utils_win.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\include\utils_mem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

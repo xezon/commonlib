@@ -33,5 +33,13 @@
     <ClInclude Include="..\include\utils_log.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\utils_c.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\include\utils_mem.h">
+      <Filter>include</Filter>
+    </None>
   </ItemGroup>
 </Project>

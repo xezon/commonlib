@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include "utils_c.h"
+#include "utils_mem.h"
 #include <chrono>
 #include <thread>
 #include <fstream>
@@ -13,10 +15,9 @@
 
 using namespace ::std::chrono_literals;
 
-namespace utils
-{
+namespace utils {
 
-template<typename T, unsigned int size>
+template <typename T, unsigned int size>
 inline unsigned int GetArraySize(T(&)[size])
 {
 	return size;
@@ -36,16 +37,6 @@ template <typename T>
 inline void Sleep(T time)
 {
 	::std::this_thread::sleep_for(time);
-}
-
-inline bool IsValidString(const char* str)
-{
-	return str && *str;
-}
-
-inline bool IsValidString(const wchar_t* str)
-{
-	return str && *str;
 }
 
 template <class T>
