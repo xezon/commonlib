@@ -4,42 +4,43 @@
     <Filter Include="include">
       <UniqueIdentifier>{dd6bc07e-7273-4a4d-8274-8436e049b0a6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\common">
+      <UniqueIdentifier>{ff0e04f3-602e-4d92-8391-821a14a68c94}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\data_enum.h">
-      <Filter>include</Filter>
+    <ClInclude Include="..\include\common\msvc_codecvt_fix_impl.h">
+      <Filter>include\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\msvc_codecvt_fix_impl.h">
-      <Filter>include</Filter>
+    <ClInclude Include="..\include\common\stl.h">
+      <Filter>include\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\strlcpy.h">
-      <Filter>include</Filter>
+    <ClInclude Include="..\include\common\strlcpy.h">
+      <Filter>include\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\time_counter.h">
-      <Filter>include</Filter>
+    <ClInclude Include="..\include\common\time_counter.h">
+      <Filter>include\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\utf8.h">
-      <Filter>include</Filter>
+    <ClInclude Include="..\include\common\utf8.h">
+      <Filter>include\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\utils.h">
-      <Filter>include</Filter>
+    <ClInclude Include="..\include\common\utils.h">
+      <Filter>include\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\stl.h">
-      <Filter>include</Filter>
+    <ClInclude Include="..\include\common\utils_c.h">
+      <Filter>include\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\utils_win.h">
-      <Filter>include</Filter>
+    <ClInclude Include="..\include\common\utils_log.h">
+      <Filter>include\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\utils_log.h">
-      <Filter>include</Filter>
+    <ClInclude Include="..\include\common\utils_mem.h">
+      <Filter>include\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\utils_c.h">
-      <Filter>include</Filter>
+    <ClInclude Include="..\include\common\utils_win.h">
+      <Filter>include\common</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\include\utils_mem.h">
-      <Filter>include</Filter>
-    </None>
+    <ClInclude Include="..\include\common\enum.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -18,6 +18,19 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\common\enum.h" />
+    <ClInclude Include="..\include\common\msvc_codecvt_fix_impl.h" />
+    <ClInclude Include="..\include\common\stl.h" />
+    <ClInclude Include="..\include\common\strlcpy.h" />
+    <ClInclude Include="..\include\common\time_counter.h" />
+    <ClInclude Include="..\include\common\utf8.h" />
+    <ClInclude Include="..\include\common\utils.h" />
+    <ClInclude Include="..\include\common\utils_c.h" />
+    <ClInclude Include="..\include\common\utils_log.h" />
+    <ClInclude Include="..\include\common\utils_mem.h" />
+    <ClInclude Include="..\include\common\utils_win.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{1E96B197-7EC2-42F0-80DA-94E5B01AAC14}</ProjectGuid>
@@ -114,21 +127,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="..\include\data_enum.h" />
-    <ClInclude Include="..\include\msvc_codecvt_fix_impl.h" />
-    <ClInclude Include="..\include\stl.h" />
-    <ClInclude Include="..\include\strlcpy.h" />
-    <ClInclude Include="..\include\time_counter.h" />
-    <ClInclude Include="..\include\utf8.h" />
-    <ClInclude Include="..\include\utils.h" />
-    <ClInclude Include="..\include\utils_c.h" />
-    <ClInclude Include="..\include\utils_log.h" />
-    <ClInclude Include="..\include\utils_win.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\include\utils_mem.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

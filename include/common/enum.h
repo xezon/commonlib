@@ -74,24 +74,6 @@ public:
 	constexpr const meta_type& meta() const {
 		return m_metas[ordinal()];
 	}
-	constexpr bool operator==(const CDataEnum& other) const noexcept {
-		return m_value == other.m_value;
-	}
-	constexpr bool operator!=(const CDataEnum& other) const noexcept {
-		return m_value != other.m_value;
-	}
-	constexpr bool operator<(const CDataEnum& other) const noexcept {
-		return m_value < other.m_value;
-	}
-	constexpr bool operator>(const CDataEnum& other) const noexcept {
-		return m_value > other.m_value;
-	}
-	constexpr bool operator<=(const CDataEnum& other) const noexcept {
-		return m_value <= other.m_value;
-	}
-	constexpr bool operator>=(const CDataEnum& other) const noexcept {
-		return m_value >= other.m_value;
-	}
 	constexpr bool is_valid() const noexcept {
 		for (ordinal_type i = 0, c = count(); i < c; ++i)
 			if (m_value == m_values[i])
