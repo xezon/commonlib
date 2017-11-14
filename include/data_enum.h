@@ -30,6 +30,10 @@ public:
 	constexpr CDataEnum() : m_value(m_values[0]) {}
 	constexpr CDataEnum(enum_type value) : m_value(value) {}
 	constexpr CDataEnum(const CDataEnum& other) : CDataEnum(other.m_value) {}
+
+	constexpr operator enum_type() const {
+		return m_value;
+	}
 	constexpr static ordinal_type count() noexcept {
 		return sizeof(m_values) / sizeof(enum_type);
 	}
@@ -96,7 +100,7 @@ public:
 	}
 };
 
-#define DATA_ENUM_UNROLL_MEMBERS(enumName, enumValue, ...) constexpr static enum_type enumName{enum_type::enumName};
+#define DATA_ENUM_UNROLL_MEMBERS(enumName, enumValue, ...) constexpr static enum_type enumName = {enum_type::enumName};
 #define DATA_ENUM_UNROLL_VALUES(enumName, enumValue, ...) enum_type::enumName,
 #define DATA_ENUM_UNROLL_NAMES(enumName, enumValue, ...) #enumName,
 #define DATA_ENUM_UNROLL_VALUE(enumName, enumValue, ...) enumName enumValue,
