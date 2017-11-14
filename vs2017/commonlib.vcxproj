@@ -24,6 +24,7 @@
     <ClInclude Include="..\include\common\stl.h" />
     <ClInclude Include="..\include\common\strlcpy.h" />
     <ClInclude Include="..\include\common\time_counter.h" />
+    <ClInclude Include="..\include\common\types.h" />
     <ClInclude Include="..\include\common\utf8.h" />
     <ClInclude Include="..\include\common\utils.h" />
     <ClInclude Include="..\include\common\utils_c.h" />

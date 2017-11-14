@@ -42,5 +42,8 @@
     <ClInclude Include="..\include\common\enum.h">
       <Filter>include\common</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\common\types.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
