@@ -16,7 +16,7 @@
 namespace utils {
 
 inline UTILS_DECLSPEC_ALLOCATOR
-void* __cdecl Alloc(size_t count, size_t size)
+void* __cdecl alloc(size_t count, size_t size)
 {
 	if (count == 0)
 	{
@@ -30,7 +30,7 @@ void* __cdecl Alloc(size_t count, size_t size)
 }
 
 
-inline void __cdecl Free(void* ptr, size_t count, size_t size)
+inline void __cdecl free(void* ptr, size_t count, size_t size)
 {
 	if (count > static_cast<size_t>(-1) / size)
 	{
@@ -41,14 +41,14 @@ inline void __cdecl Free(void* ptr, size_t count, size_t size)
 
 template <class T, class... Args>
 inline UTILS_DECLSPEC_ALLOCATOR
-T* PlacementAlloc(alloc_func_not_null alloc, Args&&... args)
+T* placement_alloc(alloc_func_not_null alloc, Args&&... args)
 {
 	T* ptr = static_cast<T*>(alloc(1, sizeof(T)));
 	return ::new (ptr) T(::std::forward<Args>(args)...);
 }
 
 template <class T>
-inline void PlacementFree(T* ptr, free_func_not_null free)
+inline void placement_free(T* ptr, free_func_not_null free)
 {
 	ptr->~T();
 	free(ptr, 1, sizeof(T));
@@ -56,7 +56,7 @@ inline void PlacementFree(T* ptr, free_func_not_null free)
 
 template <class T, class... Args>
 inline UTILS_DECLSPEC_ALLOCATOR
-T* PlacementAlloc(size_t count, alloc_func_not_null alloc, Args&&... args)
+T* placement_alloc(size_t count, alloc_func_not_null alloc, Args&&... args)
 {
 	T* ptr = static_cast<T*>(alloc(count, sizeof(T)));
 	while (count != 0) {
@@ -67,7 +67,7 @@ T* PlacementAlloc(size_t count, alloc_func_not_null alloc, Args&&... args)
 }
 
 template <class T>
-inline void PlacementFree(T* ptr, size_t count, free_func_not_null free)
+inline void placement_free(T* ptr, size_t count, free_func_not_null free)
 {
 	while (count != 0) {
 		ptr[--count].~T();
