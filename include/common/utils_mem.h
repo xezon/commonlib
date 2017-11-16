@@ -75,9 +75,9 @@ inline void PlacementFree(T* ptr, size_t count, free_func_not_null free)
 	free(ptr, count, sizeof(T));
 }
 
-struct SAllocatorFunctions
+struct custom_allocator_functions
 {
-	constexpr SAllocatorFunctions(
+	constexpr custom_allocator_functions(
 		const alloc_func_not_null alloc,
 		const free_func_not_null free) noexcept
 		: alloc(alloc)
@@ -88,8 +88,8 @@ struct SAllocatorFunctions
 	const free_func_not_null free;
 };
 
-template<class Type>
-class CAllocatorWithFunc
+template <class Type>
+class custom_allocator
 {
 public:
 	static_assert(!::std::is_const<Type>::value,
@@ -106,12 +106,12 @@ public:
 	using propagate_on_container_move_assignment = ::std::true_type;
 	using is_always_equal = ::std::true_type;
 
-	template<class> friend class CAllocatorWithFunc;
+	template<class> friend class custom_allocator;
 
 	template<class Other>
 	struct rebind
 	{
-		using other = CAllocatorWithFunc<Other>;
+		using other = custom_allocator<Other>;
 	};
 
 	pointer address(reference _Val) const noexcept
@@ -124,17 +124,17 @@ public:
 		return ::std::addressof(_Val);
 	}
 
-	CAllocatorWithFunc() noexcept = delete;
+	custom_allocator() noexcept = delete;
 
-	explicit CAllocatorWithFunc(const SAllocatorFunctions& functions) noexcept
+	explicit custom_allocator(const custom_allocator_functions& functions) noexcept
 		: m_functions(functions)
 	{
 	}
 
-	CAllocatorWithFunc(const CAllocatorWithFunc&) noexcept = default;
+	custom_allocator(const custom_allocator&) noexcept = default;
 
 	template<class Other>
-	CAllocatorWithFunc(const CAllocatorWithFunc<Other>& other) noexcept
+	custom_allocator(const custom_allocator<Other>& other) noexcept
 		: m_functions(other.m_functions)
 	{
 	}
@@ -176,7 +176,7 @@ public:
 	}
 
 private:
-	SAllocatorFunctions m_functions;
+	custom_allocator_functions m_functions;
 };
 
 } // namespace utils
