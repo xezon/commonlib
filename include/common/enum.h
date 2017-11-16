@@ -14,8 +14,9 @@
 #define DATA_ENUM_ERROR(condition)
 #endif
 
+namespace util {
 template <class EnumDefinition>
-class CDataEnum : public EnumDefinition {
+class data_enum : public EnumDefinition {
 public:
 	using enum_type       = typename EnumDefinition::enum_type;
 	using ordinal_type    = typename EnumDefinition::ordinal_type;
@@ -27,9 +28,9 @@ private:
 	enum_type m_value;
 
 public:
-	constexpr CDataEnum() : m_value(m_values[0]) {}
-	constexpr CDataEnum(enum_type value) : m_value(value) {}
-	constexpr CDataEnum(const CDataEnum& other) : CDataEnum(other.m_value) {}
+	constexpr data_enum() : m_value(m_values[0]) {}
+	constexpr data_enum(enum_type value) : m_value(value) {}
+	constexpr data_enum(const data_enum& other) : data_enum(other.m_value) {}
 
 	constexpr operator enum_type() const {
 		return m_value;
@@ -37,25 +38,25 @@ public:
 	constexpr static ordinal_type count() noexcept {
 		return sizeof(m_values) / sizeof(enum_type);
 	}
-	constexpr static CDataEnum get_by_ordinal(const ordinal_type ordinal) {
+	constexpr static data_enum get_by_ordinal(const ordinal_type ordinal) {
 		DATA_ENUM_ERROR(ordinal >= count())
-		return CDataEnum(m_values[ordinal]);
+		return data_enum(m_values[ordinal]);
 	}
-	constexpr static CDataEnum get_by_value(const underlying_type value) {
-		CDataEnum instance(static_cast<enum_type>(value));
+	constexpr static data_enum get_by_value(const underlying_type value) {
+		data_enum instance(static_cast<enum_type>(value));
 		DATA_ENUM_ERROR(instance.ordinal() >= instance.count())
 		return instance;
 	}
-	static ordinal_type ordinal_of(const CDataEnum& instance) noexcept {
+	static ordinal_type ordinal_of(const data_enum& instance) noexcept {
 		return instance.ordinal();
 	}
-	static underlying_type value_of(const CDataEnum& instance) noexcept {
+	static underlying_type value_of(const data_enum& instance) noexcept {
 		return instance.value();
 	}
-	static string_type name_of(const CDataEnum& instance) noexcept {
+	static string_type name_of(const data_enum& instance) noexcept {
 		return instance.name();
 	}
-	static const meta_type& meta_of(const CDataEnum& instance) noexcept {
+	static const meta_type& meta_of(const data_enum& instance) noexcept {
 		return instance.meta();
 	}
 	constexpr ordinal_type ordinal() const {
@@ -81,6 +82,7 @@ public:
 		return false;
 	}
 };
+} // namespace util
 
 #define DATA_ENUM_UNROLL_MEMBERS(enumName, enumValue, ...) constexpr static enum_type enumName = {enum_type::enumName};
 #define DATA_ENUM_UNROLL_VALUES(enumName, enumValue, ...) enum_type::enumName,
@@ -88,18 +90,18 @@ public:
 #define DATA_ENUM_UNROLL_VALUE(enumName, enumValue, ...) enumName enumValue,
 #define DATA_ENUM_UNROLL_META(enumName, enumValue, meta, ...) meta,
 
-#define DEFINE_NORMAL_ENUM_CLASS(clazz, underlying_t, list) \
-enum class clazz : underlying_t { \
+#define DEFINE_NORMAL_ENUM_CLASS(enumClass, underlying, list) \
+enum class enumClass : underlying { \
 	list(DATA_ENUM_UNROLL_VALUE) \
 };
 
-#define DEFINE_DATA_ENUM_CLASS(clazz, underlying_t, list, meta_t) \
-class clazz##Definition { \
-public: \
-	using ordinal_type    = size_t;       \
-	using underlying_type = underlying_t; \
-	using string_type     = const char*;  \
-	using meta_type       = meta_t;       \
+#define DEFINE_DATA_ENUM_CLASS(enumClass, enumDataClass, underlying, list, meta) \
+class enumClass##_definition { \
+protected: \
+	using ordinal_type    = size_t;      \
+	using underlying_type = underlying;  \
+	using string_type     = const char*; \
+	using meta_type       = meta;        \
 protected: \
 	enum class enum_type : underlying_type    { list(DATA_ENUM_UNROLL_VALUE)  }; \
 	constexpr static enum_type   m_values[] = { list(DATA_ENUM_UNROLL_VALUES) }; \
@@ -108,8 +110,8 @@ protected: \
 public: \
 	list(DATA_ENUM_UNROLL_MEMBERS); \
 }; \
-typedef CDataEnum<clazz##Definition> clazz;
-
+typedef ::util::data_enum<enumClass##_definition>            enumDataClass; \
+typedef ::util::data_enum<enumClass##_definition>::enum_type enumClass;
 
 #ifdef DATA_ENUM_SAMPLE
 #pragma warning(push)
@@ -131,40 +133,40 @@ struct FruitMeta
 };
 
 #define FRUIT_ENUM_LIST(e) \
-	e( Apple     , = 44 , (FruitMeta("Apples are rare"         , FruitColor::Red   )) ) \
-	e( Orange    , = 55 , (FruitMeta("Oranges are orange"      , FruitColor::Orange)) ) \
-	e( Banana    , = 66 , (FruitMeta("Bananas are long"        , FruitColor::Yellow)) ) \
-	e( Pineapple ,      , (FruitMeta("Pineapples are the tasty", FruitColor::Brown )) ) \
+	e( Apple     , = 44 , (FruitMeta("Apples are rare"     , FruitColor::Red   )) ) \
+	e( Orange    , = 55 , (FruitMeta("Oranges are orange"  , FruitColor::Orange)) ) \
+	e( Banana    , = 66 , (FruitMeta("Bananas are long"    , FruitColor::Yellow)) ) \
+	e( Pineapple ,      , (FruitMeta("Pineapples are tasty", FruitColor::Brown )) ) \
 
-DEFINE_DATA_ENUM_CLASS(Fruit, int, FRUIT_ENUM_LIST, FruitMeta)
+DEFINE_DATA_ENUM_CLASS(Fruit, FruitData, int, FRUIT_ENUM_LIST, FruitMeta)
 
 void CustomEnumExample()
 {
-	auto orangeOrdinal = Fruit::ordinal_of(Fruit::Orange); // 1
-	auto orangeValue = Fruit::value_of(Fruit::Orange);     // 55
-	auto orangeName = Fruit::name_of(Fruit::Orange);       // "Orange"
-	auto orangeMeta = Fruit::meta_of(Fruit::Orange);       // FruitMeta
+	auto orangeOrdinal = FruitData::ordinal_of(FruitData::Orange); // 1
+	auto orangeValue   = FruitData::value_of(FruitData::Orange); // 55
+	auto orangeName    = FruitData::name_of(FruitData::Orange); // "Orange"
+	auto orangeMeta    = FruitData::meta_of(FruitData::Orange); // FruitMeta
 
-	// Fruit illegalFruit = 0;                             // compile error
-	// Fruit illegalFruit = Fruit::get_by_ordinal(5);      // illegal, exception
+	// Fruit_data illegalFruit = 0; // compile error
+	// Fruit illegalFruit = Fruit::get_by_ordinal(5); // illegal, exception
 
-	Fruit fruit = Fruit::Banana;                           // fruit is Banana
-	size_t fruitOrdinal = fruit.ordinal();                 // 2
-	int fruitValue = fruit.value();                        // 66
-	const char* fruitName = fruit.name();                  // "Banana"
-	auto description = fruit.meta().description;           // "Bananas are long"
-	auto color = fruit.meta().color;                       // FruitColor::Yellow
+	FruitData   fruit            = Fruit::Banana; // fruit is Banana
+	size_t      fruitOrdinal     = fruit.ordinal(); // 2
+	int         fruitValue       = fruit.value(); // 66
+	const char* fruitName        = fruit.name(); // "Banana"
+	auto        fruitdescription = fruit.meta().description; // "Bananas are long"
+	auto        fruitcolor       = fruit.meta().color; // FruitColor::Yellow
 
-	Fruit fruit2(Fruit::Apple);
+	FruitData fruit2(FruitData::Apple);
 
-	bool same = (fruit == fruit2);                         // false
+	bool same = (fruit == fruit2); // false
 
-	int valueOf = Fruit::value_of(Fruit::Pineapple);       // 67
-	size_t count = Fruit::count();                         // 4
+	int valueOf = FruitData::value_of(FruitData::Pineapple); // 67
+	size_t count = FruitData::count(); // 4
 
 	for (size_t ordinal = 0; ordinal < count; ++ordinal)
 	{
-		Fruit fruitByOrdinal = Fruit::get_by_ordinal(ordinal);
+		Fruit fruitByOrdinal = FruitData::get_by_ordinal(ordinal);
 	}
 }
 
@@ -177,7 +179,7 @@ void CustomEnumExample()
 	e(Enum3 , , false) \
 	e(Enum4 , , false) \
 
-DEFINE_DATA_ENUM_CLASS(DummyEnum, int, DUMMY_ENUM_LIST, bool)
+DEFINE_DATA_ENUM_CLASS(DummyEnum, DummyEnumData, int, DUMMY_ENUM_LIST, bool)
 
 #pragma warning(pop)
 #endif
