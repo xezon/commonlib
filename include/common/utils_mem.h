@@ -1,8 +1,10 @@
 
 #pragma once
 
+#include <new>
+#include <memory>
 #include <utility>
-#include <gsl/pointers>
+#include <type_traits>
 #include "types.h"
 
 #if _MSC_VER >= 1900
@@ -13,54 +15,77 @@
 
 namespace utils {
 
-template <typename T, typename AllocFunc, typename... Args>
-UTILS_DECLSPEC_ALLOCATOR
-inline T* PlacementAlloc(AllocFunc alloc, Args&&... args)
+inline UTILS_DECLSPEC_ALLOCATOR
+void* __cdecl Alloc(size_t count, size_t size)
 {
-	T* p = static_cast<T*>(alloc(sizeof(T)));
-	return ::new (p) T(::std::forward<Args>(args)...);
-}
-
-template <typename T, typename FreeFunc>
-inline void PlacementFree(T* p, FreeFunc free)
-{
-	p->~T();
-	free(p);
-}
-
-template <typename T, typename AllocFunc, typename... Args>
-UTILS_DECLSPEC_ALLOCATOR
-inline T* PlacementAllocArray(size_t n, AllocFunc alloc, Args&&... args)
-{
-	T* p = static_cast<T*>(alloc(n*sizeof(T)));
-	while (n != 0) {
-		T* pn = &p[--n];
-		pn = ::new (pn) T(::std::forward<Args>(args)...);
+	if (count == 0)
+	{
+		return nullptr;
 	}
-	return p;
+	if (static_cast<size_t>(-1) / size < count)
+	{
+		throw ::std::bad_alloc();
+	}
+	return ::operator new(count * size);
 }
 
-template <typename T, typename FreeFunc>
-inline void PlacementFreeArray(T* p, size_t n, FreeFunc free)
+
+inline void __cdecl Free(void* ptr, size_t count, size_t size)
 {
-	while (n != 0) {
-		p[--n].~T();
+	if (count > static_cast<size_t>(-1) / size)
+	{
+		throw ::std::bad_alloc();
 	}
-	free(p);
+	return ::operator delete(ptr);
+}
+
+template <class T, class... Args>
+inline UTILS_DECLSPEC_ALLOCATOR
+T* PlacementAlloc(alloc_func_not_null alloc, Args&&... args)
+{
+	T* ptr = static_cast<T*>(alloc(1, sizeof(T)));
+	return ::new (ptr) T(::std::forward<Args>(args)...);
+}
+
+template <class T>
+inline void PlacementFree(T* ptr, free_func_not_null free)
+{
+	ptr->~T();
+	free(ptr, 1, sizeof(T));
+}
+
+template <class T, class... Args>
+inline UTILS_DECLSPEC_ALLOCATOR
+T* PlacementAlloc(size_t count, alloc_func_not_null alloc, Args&&... args)
+{
+	T* ptr = static_cast<T*>(alloc(count, sizeof(T)));
+	while (count != 0) {
+		T* ptrN = &ptr[--count];
+		ptrN = ::new (ptrN) T(::std::forward<Args>(args)...);
+	}
+	return ptr;
+}
+
+template <class T>
+inline void PlacementFree(T* ptr, size_t count, free_func_not_null free)
+{
+	while (count != 0) {
+		ptr[--count].~T();
+	}
+	free(ptr, count, sizeof(T));
 }
 
 struct SAllocatorFunctions
 {
-	using TAllocFunc = ::gsl::not_null<alloc_func>;
-	using TFreeFunc = ::gsl::not_null<free_func>;
-
-	constexpr SAllocatorFunctions(const TAllocFunc alloc, const TFreeFunc free) noexcept
+	constexpr SAllocatorFunctions(
+		const alloc_func_not_null alloc,
+		const free_func_not_null free) noexcept
 		: alloc(alloc)
 		, free(free)
 	{}
 
-	const TAllocFunc alloc;
-	const TFreeFunc free;
+	const alloc_func_not_null alloc;
+	const free_func_not_null free;
 };
 
 template<class Type>
@@ -117,13 +142,13 @@ public:
 	void deallocate(const pointer ptr, const size_type count)
 	{
 		(void)count;
-		m_functions.free(ptr);
+		m_functions.free(ptr, count, sizeof(Type));
 	}
 
 	UTILS_DECLSPEC_ALLOCATOR
 		pointer allocate(const size_type count)
 	{
-		return (static_cast<pointer>(m_functions.alloc(count * sizeof(Type))));
+		return static_cast<pointer>(m_functions.alloc(count, sizeof(Type)));
 	}
 
 	UTILS_DECLSPEC_ALLOCATOR

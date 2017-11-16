@@ -29,13 +29,21 @@ typedef void* free_func;
 #else
 
 #ifdef __cplusplus
+#include <cstddef>
 #include <cstdint>
 #else
+#include <stddef.h>
 #include <stdint.h>
 #endif // __cplusplus
 
-typedef void* (__cdecl* alloc_func)(size_t size);
-typedef void  (__cdecl* free_func )(void* p);
+typedef void* (__cdecl* alloc_func)(size_t count, size_t size);
+typedef void  (__cdecl* free_func )(void* ptr, size_t count, size_t size);
+
+#ifdef __cplusplus
+#include <gsl/pointers>
+typedef ::gsl::not_null<alloc_func> alloc_func_not_null;
+typedef ::gsl::not_null<free_func>  free_func_not_null;
+#endif
 
 #endif // ZORRO_LITE_C
 

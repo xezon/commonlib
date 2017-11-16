@@ -18,14 +18,16 @@ inline int IsValidWString(const wchar_t* str)
 	return str && *str;
 }
 
-inline void* __cdecl Alloc(size_t size)
+inline void* __cdecl Cmalloc(size_t count, size_t size)
 {
-	return malloc(size);
+	return malloc(count * size);
 }
 
-inline void __cdecl Free(void* p)
+inline void __cdecl Cfree(void* ptr, size_t count, size_t size)
 {
-	free(p);
+	(void)count;
+	(void)size;
+	free(ptr);
 }
 
 #endif // COMMON_UTILSC_H_
