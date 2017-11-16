@@ -6,4 +6,9 @@
     <OutDir>$(SolutionDir).$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(OutDir)\$(ProjectName)\</IntDir>
   </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\include;..\..\gsl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
 </Project>
