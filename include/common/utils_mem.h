@@ -84,6 +84,13 @@ struct custom_allocator_functions
 		, free(free)
 	{}
 
+	bool operator==(const custom_allocator_functions& other) noexcept {
+		return (alloc == other.alloc) && (free == other.free);
+	}
+	bool operator!=(const custom_allocator_functions& other) noexcept {
+		return !(*this == other);
+	}
+
 	const alloc_func_not_null alloc;
 	const free_func_not_null free;
 };
@@ -133,7 +140,7 @@ public:
 
 	custom_allocator(const custom_allocator&) noexcept = default;
 
-	template<class Other>
+	template <class Other>
 	custom_allocator(const custom_allocator<Other>& other) noexcept
 		: m_functions(other.m_functions)
 	{
@@ -157,14 +164,14 @@ public:
 		return allocate(count);
 	}
 
-	template<class ObjType, class... Args>
+	template <class ObjType, class... Args>
 	void construct(ObjType* const ptr, Args&&... args)
 	{
 		::new (const_cast<void *>(static_cast<const volatile void*>(ptr)))
 			ObjType(::std::forward<Args>(args)...);
 	}
 
-	template<class ObjType>
+	template <class ObjType>
 	void destroy(ObjType* const ptr)
 	{
 		ptr->~ObjType();
@@ -173,6 +180,18 @@ public:
 	size_t max_size() const noexcept
 	{
 		return (static_cast<size_t>(-1) / sizeof(Type));
+	}
+
+	template <class Other>
+	bool operator==(const custom_allocator<Other>& other) noexcept
+	{
+		return m_functions == other.m_functions;
+	}
+
+	template <class Other>
+	bool operator!=(const custom_allocator<Other>& other) noexcept
+	{
+		return m_functions != other.m_functions;
 	}
 
 private:
