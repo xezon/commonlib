@@ -8,14 +8,24 @@
 #include <stdlib.h>
 #endif
 
-inline int IsValidString(const char* str)
+inline int is_valid_string(const char* str)
 {
 	return str && *str;
 }
 
-inline int IsValidWString(const wchar_t* str)
+inline int is_valid_wstring(const wchar_t* str)
 {
 	return str && *str;
+}
+
+inline const char* get_valid_string(const char* str)
+{
+	return (str != 0) ? str : "";
+}
+
+inline const wchar_t* get_valid_wstring(const wchar_t* str)
+{
+	return (str != 0) ? str : L"";
 }
 
 inline void* __cdecl c_malloc(size_t count, size_t size)
