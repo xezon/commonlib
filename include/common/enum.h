@@ -19,7 +19,8 @@
 namespace util {
 
 template <class EnumDefinition>
-class data_enum : public EnumDefinition {
+class data_enum : public EnumDefinition
+{
 public:
 	using enum_type       = typename EnumDefinition::enum_type;
 	using ordinal_type    = typename EnumDefinition::ordinal_type;
@@ -31,22 +32,28 @@ public:
 	using meta_array      = typename EnumDefinition::meta_array;
 
 private:
-	enum_type m_value;
+	enum_type m_enum;
 
 public:
-	constexpr data_enum() : m_value(m_values[0]) {}
-	constexpr data_enum(enum_type value) : m_value(value) {}
-	constexpr data_enum(const data_enum& other) : data_enum(other.m_value) {}
+	constexpr data_enum() : m_enum(m_enums[0]) {}
+	constexpr data_enum(enum_type value) : m_enum(value) {}
+	constexpr data_enum(const data_enum& other) : data_enum(other.m_enum) {}
 
 	constexpr operator enum_type() const {
-		return m_value;
+		return m_enum;
+	}
+	constexpr static const enum_type* begin() noexcept {
+		return &m_enums[0];
+	}
+	constexpr static const enum_type* end() noexcept {
+		return &m_enums[0] + m_enums.size();
 	}
 	constexpr static ordinal_type count() noexcept {
-		return m_values.size();
+		return m_enums.size();
 	}
 	constexpr static data_enum get_by_ordinal(const ordinal_type ordinal) {
 		DATA_ENUM_ERROR(ordinal >= count())
-		return data_enum(m_values[ordinal]);
+		return data_enum(m_enums[ordinal]);
 	}
 	constexpr static data_enum get_by_value(const underlying_type value) {
 		data_enum instance(static_cast<enum_type>(value));
@@ -67,13 +74,13 @@ public:
 	}
 	constexpr ordinal_type ordinal() const {
 		for (ordinal_type i = 0, c = count(); i < c; ++i)
-			if (m_value == m_values[i])
+			if (m_enum == m_enums[i])
 				return i;
 		DATA_ENUM_ERROR(true)
 		return ~0u;
 	}
 	constexpr underlying_type value() const noexcept {
-		return static_cast<underlying_type>(m_value);
+		return static_cast<underlying_type>(m_enum);
 	}
 	constexpr string_type name() const {
 		return m_names[ordinal()];
@@ -83,24 +90,24 @@ public:
 	}
 	constexpr static bool is_incremental() noexcept {
 		ordinal_type i = 0;
-		for (const enum_type val : m_values)
+		for (const enum_type val : m_enums)
 			if (i++ != static_cast<ordinal_type>(val))
 				return false;
 		return true;
 	}
 	constexpr bool is_valid() const noexcept {
-		for (const enum_type val : m_values)
-			if (m_value == val)
+		for (const enum_type val : m_enums)
+			if (m_enum == val)
 				return true;
 		return false;
 	}
-	constexpr static const enum_array& values() {
-		return m_values;
+	constexpr static const enum_array& enums() noexcept {
+		return m_enums;
 	}
-	constexpr static const string_array& names() {
+	constexpr static const string_array& names() noexcept {
 		return m_names;
 	}
-	constexpr static const meta_array& metas() {
+	constexpr static const meta_array& metas() noexcept {
 		return m_metas;
 	}
 };
@@ -145,13 +152,13 @@ typedef ::util::data_enum<rawName##_definition>::enum_type rawName;
 #define DEFINE_DATA_ENUM_CLASS(rawName, dataName, underlying, list, meta) \
 DATA_ENUM_OPEN_CLASS(rawName, dataName, underlying, meta) { \
 protected: \
-	enum class enum_type : underlying_type   { list(DATA_ENUM_UNROLL_VALUE)  }; \
-	using enum_array   = ::std::array<enum_type,    DATA_ENUM_SIZE(list)>; \
-	using string_array = ::std::array<string_type,  DATA_ENUM_SIZE(list)>; \
-	using meta_array   = ::std::array<meta_type,    DATA_ENUM_SIZE(list)>; \
-	constexpr static enum_array   m_values = { list(DATA_ENUM_UNROLL_VALUES) }; \
-	constexpr static string_array m_names  = { list(DATA_ENUM_UNROLL_NAMES)  }; \
-	constexpr static meta_array   m_metas  = { list(DATA_ENUM_UNROLL_META)   }; \
+	enum class enum_type : underlying_type  { list(DATA_ENUM_UNROLL_VALUE)  }; \
+	using enum_array   = ::std::array<enum_type,   DATA_ENUM_SIZE(list)>; \
+	using string_array = ::std::array<string_type, DATA_ENUM_SIZE(list)>; \
+	using meta_array   = ::std::array<meta_type,   DATA_ENUM_SIZE(list)>; \
+	constexpr static enum_array   m_enums = { list(DATA_ENUM_UNROLL_VALUES) }; \
+	constexpr static string_array m_names = { list(DATA_ENUM_UNROLL_NAMES)  }; \
+	constexpr static meta_array   m_metas = { list(DATA_ENUM_UNROLL_META)   }; \
 public: \
 	list(DATA_ENUM_UNROLL_MEMBERS); \
 }; \
@@ -162,12 +169,12 @@ DATA_ENUM_CLOSE_CLASS(rawName, dataName)
 DATA_ENUM_OPEN_CLASS(rawName, dataName, underlying, meta) { \
 protected: \
     using enum_type = underlying_type; \
-	using enum_array   = ::std::array<enum_type,    DATA_ENUM_SIZE(list)>; \
-	using string_array = ::std::array<string_type,  DATA_ENUM_SIZE(list)>; \
-	using meta_array   = ::std::array<meta_type,    DATA_ENUM_SIZE(list)>; \
-	constexpr static enum_array   m_values = { list(DATA_ENUM_UNROLL_VALUESF) }; \
-	constexpr static string_array m_names  = { list(DATA_ENUM_UNROLL_NAMES)   }; \
-	constexpr static meta_array   m_metas  = { list(DATA_ENUM_UNROLL_META)    }; \
+	using enum_array   = ::std::array<enum_type,   DATA_ENUM_SIZE(list)>; \
+	using string_array = ::std::array<string_type, DATA_ENUM_SIZE(list)>; \
+	using meta_array   = ::std::array<meta_type,   DATA_ENUM_SIZE(list)>; \
+	constexpr static enum_array   m_enums = { list(DATA_ENUM_UNROLL_VALUESF) }; \
+	constexpr static string_array m_names = { list(DATA_ENUM_UNROLL_NAMES)   }; \
+	constexpr static meta_array   m_metas = { list(DATA_ENUM_UNROLL_META)    }; \
 public: \
 	list(DATA_ENUM_UNROLL_MEMBERSF); \
 }; \
@@ -208,7 +215,7 @@ inline void CustomEnumExample()
 	auto orangeName    = FruitData::name_of(FruitData::Orange); // "Orange"
 	auto orangeMeta    = FruitData::meta_of(FruitData::Orange); // FruitMeta
 
-	const FruitData::enum_array& values = FruitData::values();
+	const FruitData::enum_array& values = FruitData::enums();
 	const FruitData::string_array& names = FruitData::names();
 	const FruitData::meta_array& metas = FruitData::metas();
 
@@ -232,6 +239,11 @@ inline void CustomEnumExample()
 	for (size_t ordinal = 0; ordinal < count; ++ordinal)
 	{
 		Fruit fruitByOrdinal = FruitData::get_by_ordinal(ordinal);
+	}
+
+	for (Fruit fruit3 : FruitData::enums())
+	{
+		Fruit fruitFromRangeLoop = fruit3;
 	}
 }
 
