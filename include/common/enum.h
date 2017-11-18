@@ -75,9 +75,16 @@ public:
 	constexpr const meta_type& meta() const {
 		return m_metas[ordinal()];
 	}
+	constexpr static bool is_incremental() noexcept {
+		ordinal_type i = 0;
+		for (const enum_type val : m_values)
+			if (i++ != static_cast<ordinal_type>(val))
+				return false;
+		return true;
+	}
 	constexpr bool is_valid() const noexcept {
-		for (ordinal_type i = 0, c = count(); i < c; ++i)
-			if (m_value == m_values[i])
+		for (const enum_type val : m_values)
+			if (m_value == val)
 				return true;
 		return false;
 	}
@@ -112,6 +119,7 @@ public: \
 }; \
 typedef ::util::data_enum<enumClass##_definition>            enumDataClass; \
 typedef ::util::data_enum<enumClass##_definition>::enum_type enumClass;
+
 
 #ifdef DATA_ENUM_SAMPLE
 #pragma warning(push)
