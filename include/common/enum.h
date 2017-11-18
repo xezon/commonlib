@@ -15,6 +15,7 @@
 #endif
 
 namespace util {
+
 template <class EnumDefinition>
 class data_enum : public EnumDefinition {
 public:
@@ -89,25 +90,44 @@ public:
 		return false;
 	}
 };
+
+class data_enum_base
+{
+protected:
+	using ordinal_type = size_t;
+	using string_type  = const char* const;
+};
+
 } // namespace util
 
-#define DATA_ENUM_UNROLL_MEMBERS(enumName, enumValue, ...) constexpr static enum_type enumName = {enum_type::enumName};
-#define DATA_ENUM_UNROLL_VALUES(enumName, enumValue, ...) enum_type::enumName,
+#define DATA_ENUM_UNROLL_MEMBERS(enumName, enumValue, ...)  constexpr static enum_type enumName = enum_type::enumName;
+#define DATA_ENUM_UNROLL_MEMBERSF(enumName, enumValue, ...) constexpr static enum_type enumName = enumValue;
+#define DATA_ENUM_UNROLL_VALUES(enumName, enumValue, ...)  enum_type::enumName,
+#define DATA_ENUM_UNROLL_VALUESF(enumName, enumValue, ...) enumValue,
 #define DATA_ENUM_UNROLL_NAMES(enumName, enumValue, ...) #enumName,
 #define DATA_ENUM_UNROLL_VALUE(enumName, enumValue, ...) enumName enumValue,
 #define DATA_ENUM_UNROLL_META(enumName, enumValue, meta, ...) meta,
 
-#define DEFINE_NORMAL_ENUM_CLASS(enumClass, underlying, list) \
-enum class enumClass : underlying { \
-	list(DATA_ENUM_UNROLL_VALUE) \
-};
 
-#define DEFINE_DATA_ENUM_CLASS(enumClass, enumDataClass, underlying, list, meta) \
-class enumClass##_definition { \
+#define DEFINE_REGULAR_ENUM_CLASS(rawName, underlying, list) \
+enum class rawName : underlying { list(DATA_ENUM_UNROLL_VALUE) };
+
+#define DEFINE_REGULAR_FLOAT(rawName, underlying) \
+typedef underlying rawName;
+
+
+#define DATA_ENUM_OPEN_CLASS(rawName, dataName) \
+class rawName##_definition : public ::util::data_enum_base
+
+#define DATA_ENUM_CLOSE_CLASS(rawName, dataName) \
+typedef ::util::data_enum<rawName##_definition>            dataName; \
+typedef ::util::data_enum<rawName##_definition>::enum_type rawName;
+
+
+#define DEFINE_DATA_ENUM_CLASS(rawName, dataName, underlying, list, meta) \
+DATA_ENUM_OPEN_CLASS(rawName, dataName) { \
 protected: \
-	using ordinal_type    = size_t;      \
 	using underlying_type = underlying;  \
-	using string_type     = const char*; \
 	using meta_type       = meta;        \
 protected: \
 	enum class enum_type : underlying_type    { list(DATA_ENUM_UNROLL_VALUE)  }; \
@@ -117,8 +137,23 @@ protected: \
 public: \
 	list(DATA_ENUM_UNROLL_MEMBERS); \
 }; \
-typedef ::util::data_enum<enumClass##_definition>            enumDataClass; \
-typedef ::util::data_enum<enumClass##_definition>::enum_type enumClass;
+DATA_ENUM_CLOSE_CLASS(rawName, dataName)
+
+
+#define DEFINE_DATA_FLOAT(rawName, dataName, underlying, list, meta) \
+DATA_ENUM_OPEN_CLASS(rawName, dataName) { \
+protected: \
+	using underlying_type = underlying;  \
+	using meta_type       = meta;        \
+protected: \
+    using enum_type = underlying_type; \
+	constexpr static enum_type   m_values[] = { list(DATA_ENUM_UNROLL_VALUESF) }; \
+	constexpr static string_type m_names[]  = { list(DATA_ENUM_UNROLL_NAMES)   }; \
+	constexpr static meta_type   m_metas[]  = { list(DATA_ENUM_UNROLL_META)    }; \
+public: \
+	list(DATA_ENUM_UNROLL_MEMBERSF); \
+}; \
+DATA_ENUM_CLOSE_CLASS(rawName, dataName)
 
 
 #ifdef DATA_ENUM_SAMPLE
