@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include <array>
+
 #if DATA_ENUM_DEBUGGING == 1
 #include <stdexcept>
 #define DATA_ENUM_ERROR(condition) \
@@ -24,6 +26,9 @@ public:
 	using underlying_type = typename EnumDefinition::underlying_type;
 	using string_type     = typename EnumDefinition::string_type;
 	using meta_type       = typename EnumDefinition::meta_type;
+	using enum_array      = typename EnumDefinition::enum_array;
+	using string_array    = typename EnumDefinition::string_array;
+	using meta_array      = typename EnumDefinition::meta_array;
 
 private:
 	enum_type m_value;
@@ -37,7 +42,7 @@ public:
 		return m_value;
 	}
 	constexpr static ordinal_type count() noexcept {
-		return sizeof(m_values) / sizeof(enum_type);
+		return m_values.size();
 	}
 	constexpr static data_enum get_by_ordinal(const ordinal_type ordinal) {
 		DATA_ENUM_ERROR(ordinal >= count())
@@ -89,13 +94,25 @@ public:
 				return true;
 		return false;
 	}
+	constexpr static const enum_array& values() {
+		return m_values;
+	}
+	constexpr static const string_array& names() {
+		return m_names;
+	}
+	constexpr static const meta_array& metas() {
+		return m_metas;
+	}
 };
 
+template <class Underlying, class Meta>
 class data_enum_base
 {
 protected:
-	using ordinal_type = size_t;
-	using string_type  = const char* const;
+	using ordinal_type    = size_t;
+	using string_type     = const char* const;
+	using underlying_type = Underlying;
+	using meta_type       = Meta;
 };
 
 } // namespace util
@@ -107,7 +124,8 @@ protected:
 #define DATA_ENUM_UNROLL_NAMES(enumName, enumValue, ...) #enumName,
 #define DATA_ENUM_UNROLL_VALUE(enumName, enumValue, ...) enumName enumValue,
 #define DATA_ENUM_UNROLL_META(enumName, enumValue, meta, ...) meta,
-
+#define DATA_ENUM_UNROLL_COUNT(...) + 1
+#define DATA_ENUM_SIZE(list) 0 list(DATA_ENUM_UNROLL_COUNT)
 
 #define DEFINE_REGULAR_ENUM_CLASS(rawName, underlying, list) \
 enum class rawName : underlying { list(DATA_ENUM_UNROLL_VALUE) };
@@ -116,8 +134,8 @@ enum class rawName : underlying { list(DATA_ENUM_UNROLL_VALUE) };
 typedef underlying rawName;
 
 
-#define DATA_ENUM_OPEN_CLASS(rawName, dataName) \
-class rawName##_definition : public ::util::data_enum_base
+#define DATA_ENUM_OPEN_CLASS(rawName, dataName, underlying, meta) \
+class rawName##_definition : public ::util::data_enum_base<underlying, meta>
 
 #define DATA_ENUM_CLOSE_CLASS(rawName, dataName) \
 typedef ::util::data_enum<rawName##_definition>            dataName; \
@@ -125,15 +143,15 @@ typedef ::util::data_enum<rawName##_definition>::enum_type rawName;
 
 
 #define DEFINE_DATA_ENUM_CLASS(rawName, dataName, underlying, list, meta) \
-DATA_ENUM_OPEN_CLASS(rawName, dataName) { \
+DATA_ENUM_OPEN_CLASS(rawName, dataName, underlying, meta) { \
 protected: \
-	using underlying_type = underlying;  \
-	using meta_type       = meta;        \
-protected: \
-	enum class enum_type : underlying_type    { list(DATA_ENUM_UNROLL_VALUE)  }; \
-	constexpr static enum_type   m_values[] = { list(DATA_ENUM_UNROLL_VALUES) }; \
-	constexpr static string_type m_names[]  = { list(DATA_ENUM_UNROLL_NAMES)  }; \
-	constexpr static meta_type   m_metas[]  = { list(DATA_ENUM_UNROLL_META)   }; \
+	enum class enum_type : underlying_type   { list(DATA_ENUM_UNROLL_VALUE)  }; \
+	using enum_array   = ::std::array<enum_type,    DATA_ENUM_SIZE(list)>; \
+	using string_array = ::std::array<string_type,  DATA_ENUM_SIZE(list)>; \
+	using meta_array   = ::std::array<meta_type,    DATA_ENUM_SIZE(list)>; \
+	constexpr static enum_array   m_values = { list(DATA_ENUM_UNROLL_VALUES) }; \
+	constexpr static string_array m_names  = { list(DATA_ENUM_UNROLL_NAMES)  }; \
+	constexpr static meta_array   m_metas  = { list(DATA_ENUM_UNROLL_META)   }; \
 public: \
 	list(DATA_ENUM_UNROLL_MEMBERS); \
 }; \
@@ -141,15 +159,15 @@ DATA_ENUM_CLOSE_CLASS(rawName, dataName)
 
 
 #define DEFINE_DATA_FLOAT(rawName, dataName, underlying, list, meta) \
-DATA_ENUM_OPEN_CLASS(rawName, dataName) { \
-protected: \
-	using underlying_type = underlying;  \
-	using meta_type       = meta;        \
+DATA_ENUM_OPEN_CLASS(rawName, dataName, underlying, meta) { \
 protected: \
     using enum_type = underlying_type; \
-	constexpr static enum_type   m_values[] = { list(DATA_ENUM_UNROLL_VALUESF) }; \
-	constexpr static string_type m_names[]  = { list(DATA_ENUM_UNROLL_NAMES)   }; \
-	constexpr static meta_type   m_metas[]  = { list(DATA_ENUM_UNROLL_META)    }; \
+	using enum_array   = ::std::array<enum_type,    DATA_ENUM_SIZE(list)>; \
+	using string_array = ::std::array<string_type,  DATA_ENUM_SIZE(list)>; \
+	using meta_array   = ::std::array<meta_type,    DATA_ENUM_SIZE(list)>; \
+	constexpr static enum_array   m_values = { list(DATA_ENUM_UNROLL_VALUESF) }; \
+	constexpr static string_array m_names  = { list(DATA_ENUM_UNROLL_NAMES)   }; \
+	constexpr static meta_array   m_metas  = { list(DATA_ENUM_UNROLL_META)    }; \
 public: \
 	list(DATA_ENUM_UNROLL_MEMBERSF); \
 }; \
@@ -183,15 +201,19 @@ struct FruitMeta
 
 DEFINE_DATA_ENUM_CLASS(Fruit, FruitData, int, FRUIT_ENUM_LIST, FruitMeta)
 
-void CustomEnumExample()
+inline void CustomEnumExample()
 {
 	auto orangeOrdinal = FruitData::ordinal_of(FruitData::Orange); // 1
 	auto orangeValue   = FruitData::value_of(FruitData::Orange); // 55
 	auto orangeName    = FruitData::name_of(FruitData::Orange); // "Orange"
 	auto orangeMeta    = FruitData::meta_of(FruitData::Orange); // FruitMeta
 
-	// Fruit_data illegalFruit = 0; // compile error
-	// Fruit illegalFruit = Fruit::get_by_ordinal(5); // illegal, exception
+	const FruitData::enum_array& values = FruitData::values();
+	const FruitData::string_array& names = FruitData::names();
+	const FruitData::meta_array& metas = FruitData::metas();
+
+	// FruitData illegalFruit = 0; // compile error
+	// Fruit illegalFruit = FruitData::get_by_ordinal(5); // illegal, exception
 
 	FruitData   fruit            = Fruit::Banana; // fruit is Banana
 	size_t      fruitOrdinal     = fruit.ordinal(); // 2
@@ -223,6 +245,14 @@ void CustomEnumExample()
 	e(Enum4 , , false) \
 
 DEFINE_DATA_ENUM_CLASS(DummyEnum, DummyEnumData, int, DUMMY_ENUM_LIST, bool)
+
+#define DUMMY_FLOAT_LIST(e) \
+	e(Enum1 , 1.1f , false) \
+	e(Enum2 , 2.2f , false) \
+	e(Enum3 , 3.3f , false) \
+	e(Enum4 , 4.4f , false) \
+
+DEFINE_DATA_FLOAT(DummyFloat, DummyFloatData, float, DUMMY_FLOAT_LIST, bool)
 
 #pragma warning(pop)
 #endif
