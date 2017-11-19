@@ -47,13 +47,6 @@ T* placement_alloc(alloc_func_not_null alloc, Args&&... args)
 	return ::new (ptr) T(::std::forward<Args>(args)...);
 }
 
-template <class T>
-inline void placement_free(T* ptr, free_func_not_null free)
-{
-	ptr->~T();
-	free(ptr, 1, sizeof(T));
-}
-
 template <class T, class... Args>
 inline UTILS_DECLSPEC_ALLOCATOR
 T* placement_alloc(size_t count, alloc_func_not_null alloc, Args&&... args)
@@ -64,6 +57,13 @@ T* placement_alloc(size_t count, alloc_func_not_null alloc, Args&&... args)
 		ptrN = ::new (ptrN) T(::std::forward<Args>(args)...);
 	}
 	return ptr;
+}
+
+template <class T>
+inline void placement_free(T* ptr, free_func_not_null free)
+{
+	ptr->~T();
+	free(ptr, 1, sizeof(T));
 }
 
 template <class T>
@@ -121,20 +121,20 @@ public:
 		using other = custom_allocator<Other>;
 	};
 
-	pointer address(reference _Val) const noexcept
+	pointer address(reference val) const noexcept
 	{
-		return ::std::addressof(_Val);
+		return ::std::addressof(val);
 	}
 
-	const_pointer address(const_reference _Val) const noexcept
+	const_pointer address(const_reference val) const noexcept
 	{
-		return ::std::addressof(_Val);
+		return ::std::addressof(val);
 	}
 
 	custom_allocator() noexcept = delete;
 
-	explicit custom_allocator(const custom_allocator_functions& functions) noexcept
-		: m_functions(functions)
+	explicit custom_allocator(const custom_allocator_functions& allocfunc) noexcept
+		: m_allocfunc(allocfunc)
 	{
 	}
 
@@ -142,20 +142,20 @@ public:
 
 	template <class Other>
 	custom_allocator(const custom_allocator<Other>& other) noexcept
-		: m_functions(other.m_functions)
+		: m_allocfunc(other.m_allocfunc)
 	{
 	}
 
 	void deallocate(const pointer ptr, const size_type count)
 	{
 		(void)count;
-		m_functions.free(ptr, count, sizeof(Type));
+		m_allocfunc.free(ptr, count, sizeof(Type));
 	}
 
 	UTILS_DECLSPEC_ALLOCATOR
 		pointer allocate(const size_type count)
 	{
-		return static_cast<pointer>(m_functions.alloc(count, sizeof(Type)));
+		return static_cast<pointer>(m_allocfunc.alloc(count, sizeof(Type)));
 	}
 
 	UTILS_DECLSPEC_ALLOCATOR
@@ -185,17 +185,17 @@ public:
 	template <class Other>
 	bool operator==(const custom_allocator<Other>& other) noexcept
 	{
-		return m_functions == other.m_functions;
+		return m_allocfunc == other.m_allocfunc;
 	}
 
 	template <class Other>
 	bool operator!=(const custom_allocator<Other>& other) noexcept
 	{
-		return m_functions != other.m_functions;
+		return m_allocfunc != other.m_allocfunc;
 	}
 
 private:
-	custom_allocator_functions m_functions;
+	custom_allocator_functions m_allocfunc;
 };
 
 } // namespace utils

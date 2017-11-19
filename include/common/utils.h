@@ -1,13 +1,13 @@
 
 #pragma once
 
+#include "types.h"
 #include "utils_c.h"
 #include "utils_mem.h"
 #include <chrono>
 #include <thread>
 #include <fstream>
 #include <cassert>
-#include <cstdint>
 
 #define UTILS_DELETE_COPY_CONSTRUCTOR(clazz) \
 	clazz(const clazz&) = delete; \
@@ -17,10 +17,10 @@ using namespace ::std::chrono_literals;
 
 namespace utils {
 
-template <typename T, unsigned int size>
-inline unsigned int GetArraySize(T(&)[size])
+template <typename T, size_t Size>
+inline size_t GetArraySize(T(&)[Size])
 {
-	return size;
+	return Size;
 }
 
 inline bool FileExists(const wchar_t* filename)
