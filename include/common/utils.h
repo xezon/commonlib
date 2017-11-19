@@ -17,8 +17,8 @@ using namespace ::std::chrono_literals;
 
 namespace utils {
 
-template <typename T, size_t Size>
-inline size_t GetArraySize(T(&)[Size])
+template <typename Type, size_t Size>
+inline size_t GetArraySize(Type(&)[Size])
 {
 	return Size;
 }
@@ -33,30 +33,49 @@ inline bool FileExists(const wchar_t* filename)
 	return false;
 }
 
-template <typename T>
-inline void Sleep(T time)
+template <typename Time>
+inline void Sleep(Time time)
 {
 	::std::this_thread::sleep_for(time);
 }
 
-template <class T>
-inline void VerifyFunctionsStruct(const T& instance)
+template <class Type>
+inline void verify_initialized_pointers_debug(const Type& object)
 {
-	(void)instance;
+	(void)object;
 #ifdef _DEBUG
-	const size_t size = sizeof(T) / sizeof(::std::uintptr_t);
+	const size_t size = sizeof(Type) / sizeof(::std::uintptr_t);
 	for (int i = 0; i < size; ++i)
 	{
-		auto ptr = reinterpret_cast<const ::std::uintptr_t*>(&instance) + i;
-		assert(*ptr != 0);
+		auto ptr = reinterpret_cast<const ::std::uintptr_t*>(&object) + i;
+		assert(*ptr != 0u);
 	}
 #endif
 }
 
 template <class TypeA, class TypeB>
-inline void VerifyEqualPointers(TypeA* pA, TypeB* pB)
+inline void verify_equal_pointers_debug(TypeA* pA, TypeB* pB)
 {
+	(void)pA;
+	(void)pB;
+#ifdef _DEBUG
 	assert(reinterpret_cast<const void*>(pA) == reinterpret_cast<const void*>(pB));
+#endif
+}
+
+template <class Type>
+inline void nullify_object(Type& object)
+{
+	::memset(&object, 0, sizeof(Type));
+}
+
+template <class Type>
+inline void nullify_object_debug(Type& object)
+{
+	(void)object;
+#ifdef _DEBUG
+	nullify_object(object);
+#endif
 }
 
 } // namespace utils
