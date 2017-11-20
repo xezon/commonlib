@@ -7,12 +7,14 @@
 #include <iostream>
 #include <common/stl.h>
 
-class CTimeCounterDefaultPrinter
+namespace util {
+
+class time_counter_default_printer
 {
 	void print(const ::std::chrono::nanoseconds&) {}
 };
 
-class CTimeCounterStdOutPrinter
+class time_counter_stdout_printer
 {
 	using nanoseconds = ::std::chrono::nanoseconds;
 	using rep = typename nanoseconds::rep;
@@ -28,16 +30,17 @@ public:
 	}
 };
 
-template <class time_unit, class printer>
-class CTimeCounter : public printer
+template <class TimeUnit, class Printer = time_counter_stdout_printer>
+class time_counter : public Printer
 {
 public:
+	using time_unit = TimeUnit;
 	using time_point = ::std::chrono::time_point<::std::chrono::steady_clock>;
 	using clock = ::std::chrono::high_resolution_clock;
 	using duration = typename time_point::duration;
 	using rep = typename time_unit::rep;
 
-	CTimeCounter()
+	time_counter()
 		: m_startTime(clock::now())
 		, m_stopTime(time_point())
 	{}
@@ -63,7 +66,8 @@ public:
 		return time;
 	}
 
-	inline time_unit getElapsedTime() {
+	inline time_unit getElapsedTime()
+	{
 		bool wasStopped = (m_stopTime != time_point());
 		time_point stopTime = wasStopped ? m_stopTime : clock::now();
 		return ::std::chrono::duration_cast<time_unit, rep>(stopTime - m_startTime);
@@ -73,3 +77,5 @@ private:
 	time_point m_startTime;
 	time_point m_stopTime;
 };
+
+} // namespace util
