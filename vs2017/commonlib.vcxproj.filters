@@ -45,5 +45,8 @@
     <ClInclude Include="..\include\common\types.h">
       <Filter>include\common</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\common\float.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

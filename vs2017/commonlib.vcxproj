@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\common\enum.h" />
+    <ClInclude Include="..\include\common\float.h" />
     <ClInclude Include="..\include\common\msvc_codecvt_fix_impl.h" />
     <ClInclude Include="..\include\common\stl.h" />
     <ClInclude Include="..\include\common\strlcpy.h" />
