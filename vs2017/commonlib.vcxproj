@@ -30,7 +30,7 @@
     <ClInclude Include="..\include\common\utils.h" />
     <ClInclude Include="..\include\common\utils_c.h" />
     <ClInclude Include="..\include\common\utils_log.h" />
-    <ClInclude Include="..\include\common\utils_mem.h" />
+    <ClInclude Include="..\include\common\mem.h" />
     <ClInclude Include="..\include\common\utils_win.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

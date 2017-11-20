@@ -33,9 +33,6 @@
     <ClInclude Include="..\include\common\utils_log.h">
       <Filter>include\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\common\utils_mem.h">
-      <Filter>include\common</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\common\utils_win.h">
       <Filter>include\common</Filter>
     </ClInclude>
@@ -46,6 +43,9 @@
       <Filter>include\common</Filter>
     </ClInclude>
     <ClInclude Include="..\include\common\float.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\common\mem.h">
       <Filter>include\common</Filter>
     </ClInclude>
   </ItemGroup>

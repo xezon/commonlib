@@ -13,7 +13,7 @@
 #define UTILS_DECLSPEC_ALLOCATOR
 #endif
 
-namespace utils {
+namespace mem {
 
 inline UTILS_DECLSPEC_ALLOCATOR
 void* __cdecl alloc(size_t count, size_t size)
@@ -95,7 +95,7 @@ public:
 	constexpr regular_free(const free_func_not_null) noexcept {}
 
 	free_func_not_null free() const noexcept {
-		return utils::free;
+		return mem::free;
 	}
 };
 
@@ -139,10 +139,10 @@ public:
 		return false;
 	}
 	alloc_func_not_null alloc() const noexcept {
-		return utils::alloc;
+		return mem::alloc;
 	}
 	free_func_not_null free()  const noexcept {
-		return utils::free;
+		return mem::free;
 	}
 };
 
@@ -250,6 +250,6 @@ private:
 	functions_type m_allocFunctions;
 };
 
-} // namespace utils
+} // namespace mem
 
 #undef UTILS_DECLSPEC_ALLOCATOR
