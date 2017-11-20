@@ -24,18 +24,6 @@
     <ClInclude Include="..\include\common\utf8.h">
       <Filter>include\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\common\utils.h">
-      <Filter>include\common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\common\utils_c.h">
-      <Filter>include\common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\common\utils_log.h">
-      <Filter>include\common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\common\utils_win.h">
-      <Filter>include\common</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\common\enum.h">
       <Filter>include\common</Filter>
     </ClInclude>
@@ -46,6 +34,18 @@
       <Filter>include\common</Filter>
     </ClInclude>
     <ClInclude Include="..\include\common\mem.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\common\util.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\common\util_c.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\common\util_log.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\common\util_win.h">
       <Filter>include\common</Filter>
     </ClInclude>
   </ItemGroup>

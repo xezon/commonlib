@@ -27,11 +27,11 @@
     <ClInclude Include="..\include\common\time_counter.h" />
     <ClInclude Include="..\include\common\types.h" />
     <ClInclude Include="..\include\common\utf8.h" />
-    <ClInclude Include="..\include\common\utils.h" />
-    <ClInclude Include="..\include\common\utils_c.h" />
-    <ClInclude Include="..\include\common\utils_log.h" />
+    <ClInclude Include="..\include\common\util.h" />
+    <ClInclude Include="..\include\common\util_c.h" />
+    <ClInclude Include="..\include\common\util_log.h" />
     <ClInclude Include="..\include\common\mem.h" />
-    <ClInclude Include="..\include\common\utils_win.h" />
+    <ClInclude Include="..\include\common\util_win.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
