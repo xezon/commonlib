@@ -14,9 +14,10 @@
 #endif
 
 namespace mem {
+namespace internal {
 
 inline UTILS_DECLSPEC_ALLOCATOR
-void* __cdecl alloc(size_t count, size_t size)
+void* alloc(size_t count, size_t size)
 {
 	if (count == 0)
 	{
@@ -29,14 +30,25 @@ void* __cdecl alloc(size_t count, size_t size)
 	return ::operator new(count * size);
 }
 
-
-inline void __cdecl free(void* ptr, size_t count, size_t size)
+inline void free(void* ptr, size_t count, size_t size)
 {
 	if (count > static_cast<size_t>(-1) / size)
 	{
 		throw ::std::bad_alloc();
 	}
 	return ::operator delete(ptr);
+}
+
+} // namespace internal
+
+inline void* __cdecl alloc(size_t count, size_t size)
+{
+	return internal::alloc(count, size);
+}
+
+inline void __cdecl free(void* ptr, size_t count, size_t size)
+{
+	return internal::free(ptr, count, size);
 }
 
 template <class T, class... Args>
@@ -95,7 +107,7 @@ public:
 	constexpr regular_free(const free_func_not_null) noexcept {}
 
 	free_func_not_null free() const noexcept {
-		return mem::free;
+		return internal::free;
 	}
 };
 
@@ -139,10 +151,10 @@ public:
 		return false;
 	}
 	alloc_func_not_null alloc() const noexcept {
-		return mem::alloc;
+		return internal::alloc;
 	}
 	free_func_not_null free()  const noexcept {
-		return mem::free;
+		return internal::free;
 	}
 };
 
