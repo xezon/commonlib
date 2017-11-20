@@ -2,6 +2,8 @@
 #pragma once
 
 #include <array>
+#include <type_traits>
+#include <common/float.h>
 
 #if DATA_ENUM_DEBUGGING == 1
 #include <stdexcept>
@@ -19,7 +21,7 @@
 namespace util {
 
 template <class EnumDefinition>
-class data_enum : public EnumDefinition
+class DataEnum : public EnumDefinition
 {
 public:
 	using enum_type       = typename EnumDefinition::enum_type;
@@ -32,62 +34,18 @@ public:
 	using meta_array      = typename EnumDefinition::meta_array;
 
 private:
+	template <class Type, class Return>
+	using TEnableIfFloating = typename std::enable_if<std::is_floating_point<Type>::value, Return>::type;
+	template <class Type, class Return>
+	using TEnableIfIntegral = typename std::enable_if<std::is_integral<Type>::value, Return>::type;
+
 	enum_type m_enum;
 
 public:
-	constexpr data_enum() : m_enum(m_enums[0]) {}
-	constexpr data_enum(enum_type value) : m_enum(value) {}
-	constexpr data_enum(const data_enum& other) : data_enum(other.m_enum) {}
+	constexpr DataEnum() : m_enum(m_enums[0]) {}
+	constexpr DataEnum(enum_type value) : m_enum(value) {}
+	constexpr DataEnum(const DataEnum& other) : DataEnum(other.m_enum) {}
 
-	constexpr operator enum_type() const {
-		return m_enum;
-	}
-	constexpr static const enum_type* begin() noexcept {
-		return &m_enums[0];
-	}
-	constexpr static const enum_type* end() noexcept {
-		return &m_enums[0] + m_enums.size();
-	}
-	constexpr static ordinal_type count() noexcept {
-		return m_enums.size();
-	}
-	constexpr static data_enum get_by_ordinal(const ordinal_type ordinal) {
-		DATA_ENUM_ERROR(ordinal >= count())
-		return data_enum(m_enums[ordinal]);
-	}
-	constexpr static data_enum get_by_value(const underlying_type value) {
-		data_enum instance(static_cast<enum_type>(value));
-		DATA_ENUM_ERROR(instance.ordinal() >= instance.count())
-		return instance;
-	}
-	static ordinal_type ordinal_of(const data_enum& instance) noexcept {
-		return instance.ordinal();
-	}
-	static underlying_type value_of(const data_enum& instance) noexcept {
-		return instance.value();
-	}
-	static string_type name_of(const data_enum& instance) noexcept {
-		return instance.name();
-	}
-	static const meta_type& meta_of(const data_enum& instance) noexcept {
-		return instance.meta();
-	}
-	constexpr ordinal_type ordinal() const {
-		for (ordinal_type i = 0, c = count(); i < c; ++i)
-			if (m_enum == m_enums[i])
-				return i;
-		DATA_ENUM_ERROR(true)
-		return ~0u;
-	}
-	constexpr underlying_type value() const noexcept {
-		return static_cast<underlying_type>(m_enum);
-	}
-	constexpr string_type name() const {
-		return m_names[ordinal()];
-	}
-	constexpr const meta_type& meta() const {
-		return m_metas[ordinal()];
-	}
 	constexpr static bool is_incremental() noexcept {
 		ordinal_type i = 0;
 		for (const enum_type val : m_enums)
@@ -95,25 +53,102 @@ public:
 				return false;
 		return true;
 	}
+
+	constexpr static const enum_type* begin() noexcept {
+		return &m_enums[0];
+	}
+
+	constexpr static const enum_type* end() noexcept {
+		return &m_enums[0] + m_enums.size();
+	}
+
+	constexpr static ordinal_type count() noexcept {
+		return m_enums.size();
+	}
+
+	constexpr static DataEnum get_by_ordinal(const ordinal_type ordinal) {
+		DATA_ENUM_ERROR(ordinal >= count())
+		return DataEnum(m_enums[ordinal]);
+	}
+
+	constexpr static DataEnum get_by_value(const underlying_type value) {
+		DataEnum instance(static_cast<enum_type>(value));
+		DATA_ENUM_ERROR(instance.ordinal() >= instance.count())
+		return instance;
+	}
+
+	constexpr static const enum_array& enums() noexcept {
+		return m_enums;
+	}
+
+	constexpr static const string_array& names() noexcept {
+		return m_names;
+	}
+
+	constexpr static const meta_array& metas() noexcept {
+		return m_metas;
+	}
+
+	static ordinal_type ordinal_of(const DataEnum& instance) noexcept {
+		return instance.ordinal();
+	}
+
+	static underlying_type value_of(const DataEnum& instance) noexcept {
+		return instance.value();
+	}
+
+	static string_type name_of(const DataEnum& instance) noexcept {
+		return instance.name();
+	}
+
+	static const meta_type& meta_of(const DataEnum& instance) noexcept {
+		return instance.meta();
+	}
+
+	template <class Type = underlying_type>
+	constexpr TEnableIfIntegral<Type, bool> equals(enum_type value) const {
+		return m_enum == value;
+	}
+
+	template <class Type = underlying_type>
+	constexpr TEnableIfFloating<Type, bool> equals(enum_type value) const {
+		return ::util::AlmostEqual(m_enum, value);
+	}
+
+	constexpr ordinal_type ordinal() const {
+		for (ordinal_type i = 0, c = count(); i < c; ++i)
+			if (equals(m_enums[i]))
+				return i;
+		DATA_ENUM_ERROR(true)
+		return ~static_cast<ordinal_type>(0);
+	}
+
+	constexpr underlying_type value() const noexcept {
+		return static_cast<underlying_type>(m_enum);
+	}
+
+	constexpr string_type name() const {
+		return m_names[ordinal()];
+	}
+
+	constexpr const meta_type& meta() const {
+		return m_metas[ordinal()];
+	}
+
 	constexpr bool is_valid() const noexcept {
 		for (const enum_type val : m_enums)
 			if (m_enum == val)
 				return true;
 		return false;
 	}
-	constexpr static const enum_array& enums() noexcept {
-		return m_enums;
-	}
-	constexpr static const string_array& names() noexcept {
-		return m_names;
-	}
-	constexpr static const meta_array& metas() noexcept {
-		return m_metas;
+
+	constexpr operator enum_type() const {
+		return m_enum;
 	}
 };
 
 template <class Underlying, class Meta>
-class data_enum_base
+class DataEnumBase
 {
 protected:
 	using ordinal_type    = size_t;
@@ -141,16 +176,8 @@ enum class rawName : underlying { list(DATA_ENUM_UNROLL_VALUE) };
 typedef underlying rawName;
 
 
-#define DATA_ENUM_OPEN_CLASS(rawName, dataName, underlying, meta) \
-class rawName##_definition : public ::util::data_enum_base<underlying, meta>
-
-#define DATA_ENUM_CLOSE_CLASS(rawName, dataName) \
-typedef ::util::data_enum<rawName##_definition>            dataName; \
-typedef ::util::data_enum<rawName##_definition>::enum_type rawName;
-
-
 #define DEFINE_DATA_ENUM_CLASS(rawName, dataName, underlying, list, meta) \
-DATA_ENUM_OPEN_CLASS(rawName, dataName, underlying, meta) { \
+class rawName##Definition : public ::util::DataEnumBase<underlying, meta> { \
 protected: \
 	enum class enum_type : underlying_type  { list(DATA_ENUM_UNROLL_VALUE)  }; \
 	using enum_array   = ::std::array<enum_type,   DATA_ENUM_SIZE(list)>; \
@@ -162,13 +189,14 @@ protected: \
 public: \
 	list(DATA_ENUM_UNROLL_MEMBERS); \
 }; \
-DATA_ENUM_CLOSE_CLASS(rawName, dataName)
+typedef ::util::DataEnum<rawName##Definition>            dataName; \
+typedef ::util::DataEnum<rawName##Definition>::enum_type rawName;
 
 
 #define DEFINE_DATA_FLOAT(rawName, dataName, underlying, list, meta) \
-DATA_ENUM_OPEN_CLASS(rawName, dataName, underlying, meta) { \
+class rawName##Definition : public ::util::DataEnumBase<underlying, meta> { \
 protected: \
-    using enum_type = underlying_type; \
+    using enum_type    = underlying_type; \
 	using enum_array   = ::std::array<enum_type,   DATA_ENUM_SIZE(list)>; \
 	using string_array = ::std::array<string_type, DATA_ENUM_SIZE(list)>; \
 	using meta_array   = ::std::array<meta_type,   DATA_ENUM_SIZE(list)>; \
@@ -178,7 +206,8 @@ protected: \
 public: \
 	list(DATA_ENUM_UNROLL_MEMBERSF); \
 }; \
-DATA_ENUM_CLOSE_CLASS(rawName, dataName)
+typedef ::util::DataEnum<rawName##Definition>                  dataName; \
+typedef ::util::DataEnum<rawName##Definition>::underlying_type rawName;
 
 
 #ifdef DATA_ENUM_SAMPLE
