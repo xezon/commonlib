@@ -14,15 +14,15 @@
 
 using namespace ::std::chrono_literals;
 
-namespace utils {
+namespace util {
 
 template <typename Type, size_t Size>
-inline size_t GetArraySize(Type(&)[Size])
+inline size_t array_size(Type(&)[Size])
 {
 	return Size;
 }
 
-inline bool FileExists(const wchar_t* filename)
+inline bool file_exists(const wchar_t* filename)
 {
 	if (filename && filename[0])
 	{
@@ -33,7 +33,7 @@ inline bool FileExists(const wchar_t* filename)
 }
 
 template <typename Time>
-inline void Sleep(Time time)
+inline void sleep(Time time)
 {
 	::std::this_thread::sleep_for(time);
 }
@@ -77,4 +77,4 @@ inline void nullify_object_debug(Type& object)
 #endif
 }
 
-} // namespace utils
+} // namespace util

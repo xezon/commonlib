@@ -3,7 +3,7 @@
 
 #include <Windows.h>
 
-namespace utils {
+namespace util {
 
 template<typename F>
 inline F GetProcAddressT(HMODULE hModule, LPCSTR lpProcName)
@@ -20,4 +20,4 @@ inline void SafeCloseHandle(HANDLE& handle)
 	}
 }
 
-} // namespace utils
+} // namespace util

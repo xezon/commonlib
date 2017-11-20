@@ -4,7 +4,7 @@
 #include <common/stl.h>
 #include <iostream>
 
-namespace utils {
+namespace util {
 
 template <class... Args>
 inline void clog(const char* format, Args... args)
@@ -30,4 +30,4 @@ inline void wcerr(const wchar_t* format, Args... args)
 	::std::wcerr << ::stl::wstring_format(format, args...).c_str() << ::std::endl;
 }
 
-}
+} // namespace util

@@ -8,6 +8,10 @@
 #include <stdlib.h>
 #endif
 
+#ifdef __cplusplus
+namespace util {
+#endif
+
 inline int is_valid_string(const char* str)
 {
 	return str && *str;
@@ -39,5 +43,9 @@ inline void __cdecl c_free(void* ptr, size_t count, size_t size)
 	(void)size;
 	free(ptr);
 }
+
+#ifdef __cplusplus
+} // namespace util
+#endif
 
 #endif // COMMON_UTILSC_H_
