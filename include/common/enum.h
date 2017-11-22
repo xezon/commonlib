@@ -177,9 +177,10 @@ typedef underlying rawName;
 
 
 #define DEFINE_DATA_ENUM_CLASS(rawName, dataName, underlying, list, meta) \
-class rawName##Definition : public ::util::DataEnumBase<underlying, meta> { \
+enum class rawName : underlying { list(DATA_ENUM_UNROLL_VALUE) }; \
+class dataName##Definition : public ::util::DataEnumBase<underlying, meta> { \
 protected: \
-	enum class enum_type : underlying_type  { list(DATA_ENUM_UNROLL_VALUE)  }; \
+	using enum_type    = rawName; \
 	using enum_array   = ::std::array<enum_type,   DATA_ENUM_SIZE(list)>; \
 	using string_array = ::std::array<string_type, DATA_ENUM_SIZE(list)>; \
 	using meta_array   = ::std::array<meta_type,   DATA_ENUM_SIZE(list)>; \
@@ -189,14 +190,14 @@ protected: \
 public: \
 	list(DATA_ENUM_UNROLL_MEMBERS); \
 }; \
-typedef ::util::DataEnum<rawName##Definition>            dataName; \
-typedef ::util::DataEnum<rawName##Definition>::enum_type rawName;
+typedef ::util::DataEnum<dataName##Definition> dataName; \
 
 
 #define DEFINE_DATA_FLOAT(rawName, dataName, underlying, list, meta) \
-class rawName##Definition : public ::util::DataEnumBase<underlying, meta> { \
+typedef underlying rawName; \
+class dataName##Definition : public ::util::DataEnumBase<underlying, meta> { \
 protected: \
-    using enum_type    = underlying_type; \
+    using enum_type    = rawName; \
 	using enum_array   = ::std::array<enum_type,   DATA_ENUM_SIZE(list)>; \
 	using string_array = ::std::array<string_type, DATA_ENUM_SIZE(list)>; \
 	using meta_array   = ::std::array<meta_type,   DATA_ENUM_SIZE(list)>; \
@@ -206,8 +207,7 @@ protected: \
 public: \
 	list(DATA_ENUM_UNROLL_MEMBERSF); \
 }; \
-typedef ::util::DataEnum<rawName##Definition>                  dataName; \
-typedef ::util::DataEnum<rawName##Definition>::underlying_type rawName;
+typedef ::util::DataEnum<dataName##Definition> dataName; \
 
 
 #ifdef DATA_ENUM_SAMPLE
