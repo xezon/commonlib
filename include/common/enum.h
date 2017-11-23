@@ -35,9 +35,9 @@ public:
 
 private:
 	template <class Type, class Return>
-	using TEnableIfFloating = typename std::enable_if<std::is_floating_point<Type>::value, Return>::type;
+	using enable_if_integral = typename std::enable_if<std::is_integral<Type>::value, Return>::type;
 	template <class Type, class Return>
-	using TEnableIfIntegral = typename std::enable_if<std::is_integral<Type>::value, Return>::type;
+	using enable_if_floating = typename std::enable_if<std::is_floating_point<Type>::value, Return>::type;
 
 	enum_type m_enum;
 
@@ -106,12 +106,12 @@ public:
 	}
 
 	template <class Type = underlying_type>
-	constexpr TEnableIfIntegral<Type, bool> equals(enum_type value) const {
+	constexpr enable_if_integral<Type, bool> equals(enum_type value) const {
 		return m_enum == value;
 	}
 
 	template <class Type = underlying_type>
-	constexpr TEnableIfFloating<Type, bool> equals(enum_type value) const {
+	constexpr enable_if_floating<Type, bool> equals(enum_type value) const {
 		return ::util::AlmostEqual(m_enum, value);
 	}
 
