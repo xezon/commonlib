@@ -41,6 +41,15 @@ inline void free(void* ptr, size_t count, size_t size)
 
 } // namespace internal
 
+extern alloc_func g_alloc;
+extern free_func g_free;
+
+#define DEFINE_GLOBAL_ALLOC_FUNCTIONS \
+namespace mem { \
+alloc_func g_alloc = internal::alloc; \
+free_func g_free = internal::free; \
+}
+
 inline void* __cdecl alloc(size_t count, size_t size)
 {
 	return internal::alloc(count, size);
@@ -50,6 +59,7 @@ inline void __cdecl free(void* ptr, size_t count, size_t size)
 {
 	return internal::free(ptr, count, size);
 }
+
 
 template <class T, class... Args>
 inline UTILS_DECLSPEC_ALLOCATOR
@@ -86,6 +96,32 @@ inline void placement_free(T* ptr, size_t count, const free_func_not_null free)
 	}
 	free(ptr, count, sizeof(T));
 }
+
+
+template <class T, class... Args>
+T* placement_g_alloc(Args&&... args)
+{
+	return placement_alloc<T>(g_alloc, ::std::forward<Args>(args)...);
+}
+
+template <class T, class... Args>
+T* placement_g_alloc(size_t count, Args&&... args)
+{
+	return placement_alloc<T>(count, g_alloc, ::std::forward<Args>(args)...);
+}
+
+template <class T>
+inline void placement_g_free(T* ptr)
+{
+	placement_free(ptr, g_free);
+}
+
+template <class T>
+inline void placement_g_free(T* ptr, size_t count)
+{
+	placement_free(ptr, count, g_free);
+}
+
 
 class custom_free
 {
@@ -159,7 +195,7 @@ public:
 };
 
 template <class Type, class Functions>
-class custom_allocator
+class customf_allocator
 {
 public:
 	static_assert(!::std::is_const<Type>::value,
@@ -169,43 +205,21 @@ public:
 	using value_type = Type;
 	using functions_type = Functions;
 	using pointer = value_type*;
-	using const_pointer = const value_type*;
-	using reference = value_type&;
-	using const_reference = const value_type&;
 	using size_type = size_t;
-	using difference_type = ptrdiff_t;
-	using propagate_on_container_move_assignment = ::std::true_type;
-	using is_always_equal = ::std::true_type;
 
-	template<class, class> friend class custom_allocator;
+	template<class, class> friend class customf_allocator;
 
-	template<class Other>
-	struct rebind
-	{
-		using other = custom_allocator<Other, Functions>;
-	};
+	customf_allocator() noexcept = delete;
 
-	pointer address(reference val) const noexcept
-	{
-		return ::std::addressof(val);
-	}
-
-	const_pointer address(const_reference val) const noexcept
-	{
-		return ::std::addressof(val);
-	}
-
-	custom_allocator() noexcept = delete;
-
-	explicit custom_allocator(const functions_type& allocFunctions) noexcept
+	explicit customf_allocator(const functions_type& allocFunctions) noexcept
 		: m_allocFunctions(allocFunctions)
 	{
 	}
 
-	custom_allocator(const custom_allocator&) noexcept = default;
+	customf_allocator(const customf_allocator&) noexcept = default;
 
 	template <class Other>
-	custom_allocator(const custom_allocator<Other, Functions>& other) noexcept
+	customf_allocator(const customf_allocator<Other, Functions>& other) noexcept
 		: m_allocFunctions(other.m_allocFunctions)
 	{
 	}
@@ -222,44 +236,66 @@ public:
 		return static_cast<pointer>(m_allocFunctions.alloc()(count, sizeof(Type)));
 	}
 
-	UTILS_DECLSPEC_ALLOCATOR
-	pointer allocate(const size_type count, const void*)
-	{
-		return allocate(count);
-	}
-
-	template <class ObjType, class... Args>
-	void construct(ObjType* const ptr, Args&&... args)
-	{
-		::new (const_cast<void *>(static_cast<const volatile void*>(ptr)))
-			ObjType(::std::forward<Args>(args)...);
-	}
-
-	template <class ObjType>
-	void destroy(ObjType* const ptr)
-	{
-		ptr->~ObjType();
-	}
-
-	size_t max_size() const noexcept
-	{
-		return (static_cast<size_t>(-1) / sizeof(Type));
-	}
-
 	template <class Other>
-	bool operator==(const custom_allocator<Other, Functions>& other) noexcept
+	bool operator==(const customf_allocator<Other, Functions>& other) noexcept
 	{
 		return m_allocFunctions == other.m_allocFunctions;
 	}
 
 	template <class Other>
-	bool operator!=(const custom_allocator<Other, Functions>& other) noexcept
+	bool operator!=(const customf_allocator<Other, Functions>& other) noexcept
 	{
 		return m_allocFunctions != other.m_allocFunctions;
 	}
 
 private:
 	functions_type m_allocFunctions;
+};
+
+template <class Type>
+class globalf_allocator
+{
+public:
+	static_assert(!::std::is_const<Type>::value,
+		"The C++ Standard forbids containers of const elements "
+		"because allocator<const T> is ill-formed.");
+
+	using value_type = Type;
+	using pointer = value_type*;
+	using size_type = size_t;
+
+	globalf_allocator() noexcept = default;
+
+	globalf_allocator(const globalf_allocator&) noexcept = default;
+
+	template <class Other>
+	globalf_allocator(const globalf_allocator<Other>&) noexcept
+	{
+	}
+
+	void deallocate(const pointer ptr, const size_type count)
+	{
+		(void)count;
+		g_free(ptr, count, sizeof(Type));
+	}
+
+	UTILS_DECLSPEC_ALLOCATOR
+	pointer allocate(const size_type count)
+	{
+		return static_cast<pointer>(g_alloc(count, sizeof(Type)));
+	}
+
+	template <class Other>
+	bool operator==(const globalf_allocator<Other>& other) noexcept
+	{
+		return true;
+	}
+
+	template <class Other>
+	bool operator!=(const globalf_allocator<Other>& other) noexcept
+	{
+		return false;
+	}
 };
 
 } // namespace mem
