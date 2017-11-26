@@ -6,7 +6,6 @@
 #include <fstream>
 #include <cassert>
 #include <common/types.h>
-#include <common/util_c.h>
 
 #define UTILS_DELETE_COPY_CONSTRUCTOR(clazz) \
 	clazz(const clazz&) = delete; \
@@ -16,7 +15,23 @@ using namespace ::std::chrono_literals;
 
 namespace util {
 
-template <typename Type, size_t Size>
+template <class Char>
+inline bool is_valid_string(Char* str)
+{
+	return str && *str;
+}
+
+inline const char* get_valid_string(const char* str)
+{
+	return (str != 0) ? str : "";
+}
+
+inline const wchar_t* get_valid_string(const wchar_t* str)
+{
+	return (str != 0) ? str : L"";
+}
+
+template <class Type, size_t Size>
 inline size_t array_size(Type(&)[Size])
 {
 	return Size;
@@ -32,7 +47,7 @@ inline bool file_exists(const wchar_t* filename)
 	return false;
 }
 
-template <typename Time>
+template <class Time>
 inline void sleep(Time time)
 {
 	::std::this_thread::sleep_for(time);

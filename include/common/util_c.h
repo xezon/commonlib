@@ -3,14 +3,9 @@
 #define COMMON_UTILSC_H_
 
 #ifdef __cplusplus
-#include <cstdlib>
-#else
+#error This header is meant for C code only
+#endif
 #include <stdlib.h>
-#endif
-
-#ifdef __cplusplus
-namespace util {
-#endif
 
 inline int is_valid_string(const char* str)
 {
@@ -43,9 +38,5 @@ inline void __cdecl c_free(void* ptr, size_t count, size_t size)
 	(void)size;
 	free(ptr);
 }
-
-#ifdef __cplusplus
-} // namespace util
-#endif
 
 #endif // COMMON_UTILSC_H_
