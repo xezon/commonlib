@@ -30,7 +30,7 @@ inline ::std::wstring to_ucs2(const char* str)
 	return c.from_bytes(str);
 }
 
-inline ::std::string to_utf8(::std::u16string str)
+inline ::std::string to_utf8(const ::std::u16string& str)
 {
 	::std::wstring_convert<::std::codecvt_utf8_utf16<char16_t>, char16_t> c;
 	return c.to_bytes(str);
@@ -42,7 +42,7 @@ inline ::std::string to_utf8(const char16_t* str)
 	return c.to_bytes(str);
 }
 
-inline ::std::string to_utf8(::std::wstring str)
+inline ::std::string to_utf8(const ::std::wstring& str)
 {
 	::std::wstring_convert<::std::codecvt_utf8<wchar_t>, wchar_t> c;
 	return c.to_bytes(str);
@@ -52,6 +52,18 @@ inline ::std::string to_utf8(const wchar_t* str)
 {
 	::std::wstring_convert<::std::codecvt_utf8<wchar_t>, wchar_t> c;
 	return c.to_bytes(str);
+}
+
+// Intentional string pass-through for platform dependent string types
+
+inline ::std::string to_utf8(const ::std::string& str)
+{
+	return str;
+}
+
+inline ::std::string to_utf8(const char* str)
+{
+	return str;
 }
 
 } // namespace utf8
