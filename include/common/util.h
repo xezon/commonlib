@@ -37,6 +37,14 @@ inline size_t array_size(Type(&)[Size])
 	return Size;
 }
 
+template <class Type>
+inline void SafeRelease(Type*& p) {
+	if (p) {
+		p->Release();
+		p = 0;
+	}
+}
+
 inline bool file_exists(const wchar_t* filename)
 {
 	if (filename && filename[0])

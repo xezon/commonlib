@@ -7,6 +7,10 @@
 #endif
 #include <stdlib.h>
 
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+
+#define SAFE_RELEASE(p) if(p) { p->Release(p); p = 0; }
+
 inline int is_valid_string(const char* str)
 {
 	return str && *str;
