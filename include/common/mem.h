@@ -286,13 +286,13 @@ public:
 	}
 
 	template <class Other>
-	bool operator==(const globalf_allocator<Other>& other) noexcept
+	bool operator==(const globalf_allocator<Other>&) noexcept
 	{
 		return true;
 	}
 
 	template <class Other>
-	bool operator!=(const globalf_allocator<Other>& other) noexcept
+	bool operator!=(const globalf_allocator<Other>&) noexcept
 	{
 		return false;
 	}
