@@ -107,4 +107,10 @@ inline typename Iterator::difference_type binary_find_index(Iterator first, Iter
 	return ::std::distance(first, it);
 }
 
+template <class Type>
+inline void clear_mem(Type& object)
+{
+	Type().swap(object);
+}
+
 } // namespace stl
