@@ -19,6 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\date\include\date\chrono_io.h" />
+    <ClInclude Include="..\..\date\include\date\date.h" />
+    <ClInclude Include="..\..\date\include\date\ios.h" />
+    <ClInclude Include="..\..\date\include\date\islamic.h" />
+    <ClInclude Include="..\..\date\include\date\iso_week.h" />
+    <ClInclude Include="..\..\date\include\date\julian.h" />
+    <ClInclude Include="..\..\date\include\date\ptz.h" />
+    <ClInclude Include="..\..\date\include\date\tz.h" />
+    <ClInclude Include="..\..\date\include\date\tz_private.h" />
     <ClInclude Include="..\include\common\enum.h" />
     <ClInclude Include="..\include\common\float.h" />
     <ClInclude Include="..\include\common\msvc_codecvt_fix_impl.h" />
@@ -32,6 +41,18 @@
     <ClInclude Include="..\include\common\util_log.h" />
     <ClInclude Include="..\include\common\mem.h" />
     <ClInclude Include="..\include\common\util_win.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\date\include\date\ios.mm" />
+    <None Include="..\..\gsl\include\gsl\gsl" />
+    <None Include="..\..\gsl\include\gsl\gsl_algorithm" />
+    <None Include="..\..\gsl\include\gsl\gsl_assert" />
+    <None Include="..\..\gsl\include\gsl\gsl_byte" />
+    <None Include="..\..\gsl\include\gsl\gsl_util" />
+    <None Include="..\..\gsl\include\gsl\multi_span" />
+    <None Include="..\..\gsl\include\gsl\pointers" />
+    <None Include="..\..\gsl\include\gsl\span" />
+    <None Include="..\..\gsl\include\gsl\string_span" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

@@ -7,6 +7,12 @@
     <Filter Include="include\common">
       <UniqueIdentifier>{ff0e04f3-602e-4d92-8391-821a14a68c94}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\date">
+      <UniqueIdentifier>{ce225033-1772-488f-97fe-ccef84c2acbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\gsl">
+      <UniqueIdentifier>{58dd6995-7472-430f-86cd-8ddc01956e0b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\common\msvc_codecvt_fix_impl.h">
@@ -48,5 +54,64 @@
     <ClInclude Include="..\include\common\util_win.h">
       <Filter>include\common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\date\include\date\chrono_io.h">
+      <Filter>include\date</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\date\include\date\date.h">
+      <Filter>include\date</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\date\include\date\ios.h">
+      <Filter>include\date</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\date\include\date\islamic.h">
+      <Filter>include\date</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\date\include\date\iso_week.h">
+      <Filter>include\date</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\date\include\date\julian.h">
+      <Filter>include\date</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\date\include\date\ptz.h">
+      <Filter>include\date</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\date\include\date\tz.h">
+      <Filter>include\date</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\date\include\date\tz_private.h">
+      <Filter>include\date</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\date\include\date\ios.mm">
+      <Filter>include\date</Filter>
+    </None>
+    <None Include="..\..\gsl\include\gsl\gsl">
+      <Filter>include\gsl</Filter>
+    </None>
+    <None Include="..\..\gsl\include\gsl\gsl_algorithm">
+      <Filter>include\gsl</Filter>
+    </None>
+    <None Include="..\..\gsl\include\gsl\gsl_assert">
+      <Filter>include\gsl</Filter>
+    </None>
+    <None Include="..\..\gsl\include\gsl\gsl_byte">
+      <Filter>include\gsl</Filter>
+    </None>
+    <None Include="..\..\gsl\include\gsl\gsl_util">
+      <Filter>include\gsl</Filter>
+    </None>
+    <None Include="..\..\gsl\include\gsl\multi_span">
+      <Filter>include\gsl</Filter>
+    </None>
+    <None Include="..\..\gsl\include\gsl\pointers">
+      <Filter>include\gsl</Filter>
+    </None>
+    <None Include="..\..\gsl\include\gsl\span">
+      <Filter>include\gsl</Filter>
+    </None>
+    <None Include="..\..\gsl\include\gsl\string_span">
+      <Filter>include\gsl</Filter>
+    </None>
   </ItemGroup>
 </Project>
