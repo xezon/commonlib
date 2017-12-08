@@ -66,6 +66,10 @@ public:
 		return m_enums.size();
 	}
 
+	constexpr static ordinal_type size() noexcept {
+		return m_enums.size();
+	}
+
 	constexpr static DataEnum get_by_ordinal(const ordinal_type ordinal) {
 		DATA_ENUM_ERROR(ordinal >= count())
 		return DataEnum(m_enums[ordinal]);
