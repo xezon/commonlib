@@ -81,6 +81,9 @@
     <ClInclude Include="..\..\date\include\date\tz_private.h">
       <Filter>include\date</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\common\vector_map.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\date\include\date\ios.mm">

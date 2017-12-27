@@ -41,6 +41,7 @@
     <ClInclude Include="..\include\common\util_log.h" />
     <ClInclude Include="..\include\common\mem.h" />
     <ClInclude Include="..\include\common\util_win.h" />
+    <ClInclude Include="..\include\common\vector_map.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\date\include\date\ios.mm" />
