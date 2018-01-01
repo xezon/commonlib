@@ -69,6 +69,13 @@ inline ::std::wstring wstring_format(const wchar_t* format, Args... args)
 	return string_format_t<::std::wstring>(::std::wstring::allocator_type(), format, args...);
 }
 
+template <class Map>
+inline typename Map::mapped_type& map_find_or_insert(Map& map, const typename Map::key_type& key, const typename Map::mapped_type& defValue = typename Map::mapped_type())
+{
+	std::pair<typename Map::iterator, bool> pair = map.insert(typename Map::value_type(key, defValue));
+	return pair.first->second;
+}
+
 template <class Container, class Value>
 inline bool find_and_erase(Container& container, const Value& value)
 {
